@@ -15,6 +15,7 @@
 # limitations under the License.
 #
 import webapp2
+import os
 import jinja2
 
 jinja_environment=jinja2.Environment(
