@@ -14,6 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+#
+#
+# Starting out by making search bar that will take in a search paramenter and return its result
+
 import webapp2
 import os
 import jinja2
@@ -22,11 +26,22 @@ jinja_environment=jinja2.Environment(
     loader=jinja2.FileSystemLoader(
         os.path.dirname(__file__)))
 
-
-class MainHandler(webapp2.RequestHandler):
+# handles input for searches
+class SearchHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.write('Hello world!')
+        template = jinja_environment.get_template('/templates/search.html')
+        self.response.write(template.render())
+
+#displays search results on a new page /results
+# with GCSE, it's also possible to display the search bar and results on the same page,
+# instead of two pages as it is here.
+class ResultHandler(webapp2.RequestHandler):
+    def get(self):
+        template=jinja_environment.get_template('/templates/results.html')
+        template_variables={"user_search":self.request.get('search')}
+        self.response.write(template.render(template_variables))
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/', SearchHandler),
+    ('/results',ResultHandler)
 ], debug=True)
