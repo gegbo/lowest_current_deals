@@ -21,6 +21,8 @@
 import webapp2
 import os
 import jinja2
+import json
+import urllib2
 
 jinja_environment=jinja2.Environment(
     loader=jinja2.FileSystemLoader(
@@ -33,13 +35,17 @@ class SearchHandler(webapp2.RequestHandler):
         self.response.write(template.render())
 
 #displays search results on a new page /results
-# with GCSE, it's also possible to display the search bar and results on the same page,
-# instead of two pages as it is here.
+# In the finished product, searches will display products matching the
+# user's search from Best Buy, Walmart
+# via their respective APIs
+
 class ResultHandler(webapp2.RequestHandler):
     def get(self):
         template=jinja_environment.get_template('/templates/results.html')
         template_variables={"user_search":self.request.get('search')}
         self.response.write(template.render(template_variables))
+        # returns in JSON name, salePrice, and URL of user's search from BestBuy
+        self.response.write(self.response.out.write(urllib2.urlopen('http://api.remix.bestbuy.com/v1/products(search='+template_variables["user_search"]+')?format=json&show=sku,name,salePrice,url&apiKey=24ta6vtsr78a22fmv8ngfjet').read()))
 
 class WishListHandler(webapp2.RequestHandler):
     def get(self):
