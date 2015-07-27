@@ -41,7 +41,13 @@ class ResultHandler(webapp2.RequestHandler):
         template_variables={"user_search":self.request.get('search')}
         self.response.write(template.render(template_variables))
 
+class WishListHandler(webapp2.RequestHandler):
+    def get(self):
+        template=jinja_environment.get_template('/templates/wishlist.html')
+        self.response.write(template.render())
+
 app = webapp2.WSGIApplication([
     ('/', SearchHandler),
-    ('/results',ResultHandler)
+    ('/results',ResultHandler),
+    ('/wishlist',WishListHandler)
 ], debug=True)
