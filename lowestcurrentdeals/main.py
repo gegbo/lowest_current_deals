@@ -63,6 +63,7 @@ class ResultHandler(webapp2.RequestHandler):
         template_variables={"user_search":self.request.get('search'),'bestbuy':bestbuy_product,'walmart':walmart_product}
         self.response.write(template.render(template_variables))
 
+
 class WishListHandler(webapp2.RequestHandler):
     def get(self):
         template=jinja_environment.get_template('/templates/wishlist.html')
