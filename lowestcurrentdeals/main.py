@@ -45,7 +45,18 @@ class ResultHandler(webapp2.RequestHandler):
         template_variables={"user_search":self.request.get('search')}
         self.response.write(template.render(template_variables))
         # returns in JSON name, salePrice, and URL of user's search from BestBuy
-        self.response.write(self.response.out.write(urllib2.urlopen('http://api.remix.bestbuy.com/v1/products(search='+template_variables["user_search"]+')?format=json&show=sku,name,salePrice,url&apiKey=24ta6vtsr78a22fmv8ngfjet').read()))
+        url='http://api.remix.bestbuy.com/v1/products(search='+template_variables["user_search"]+')?format=json&show=sku,name,salePrice,url,image&apiKey=24ta6vtsr78a22fmv8ngfjet'
+        JSON_string=json.load(urllib2.urlopen(url))
+        #for i in JSON_string:
+        #    name=JSON_string["products"][i]['name']
+        #    self.response.out.write(name)
+        image_source=JSON_string["products"][0]["image"]
+        self.response.write(("<img src=%s>")%image_source)
+        self.response.write(JSON_string["products"][0]["name"])
+        self.response.write('<br>Sale Price: '+str(JSON_string["products"][0]["salePrice"]))
+        link_to_buy=str(JSON_string["products"][0]["url"])
+        self.response.write(("<br><a href=%s>Buy</a>")%link_to_buy)
+
 
 class WishListHandler(webapp2.RequestHandler):
     def get(self):
