@@ -23,7 +23,7 @@ import os
 import jinja2
 import json
 import urllib2
-
+from google.appengine.api import urlfetch
 
 jinja_environment=jinja2.Environment(
     loader=jinja2.FileSystemLoader(
@@ -48,13 +48,14 @@ class ResultHandler(webapp2.RequestHandler):
         # returns in JSON name, salePrice, and URL of user's search from BestBuy
         bestbuy_url='http://api.remix.bestbuy.com/v1/products(search='+template_variables["user_search"]+')?format=json&show=sku,name,salePrice,url,image&apiKey=24ta6vtsr78a22fmv8ngfjet'
         bestbuy_JSON_string=json.load(urllib2.urlopen(bestbuy_url))
-        # returns in JSON name, salePrice, and URL of user's search from Walmart
+
         walmart_url="http://api.walmartlabs.com/v1/search?query="+template_variables["user_search"]+"&format=json&numitems=10&apiKey=cz9kfm3vuhssnk6hn33zg86k"
         walmart_JSON_string=json.load(urllib2.urlopen(walmart_url))
 
 
-        # loop that controls walmart entries
 
+
+        # handles walmart output
         j=0
         while j<(len(walmart_JSON_string)-1):
             j+=1
@@ -68,8 +69,8 @@ class ResultHandler(webapp2.RequestHandler):
             walmart_link_to_buy=str(walmart_JSON_string["items"][j]["productUrl"])
             self.response.write(("<a href=%s>Buy</a>")%walmart_link_to_buy)
             self.response.write("<br>")
-
-        # loop that controls BestBuy entries 
+            
+        # handles BestBuy output
         i=0
         while i<(len(bestbuy_JSON_string)-1):
 
