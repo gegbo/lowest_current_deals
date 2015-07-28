@@ -8,25 +8,10 @@
     <a href= "/wishlist">Go to my Wishlist</a>
     <h1>Lowest Current Deal</h1>
 
-    <script>
-      (function() {
-        var cx = '017572303234095721313:sfzac6xgrti';
-        var gcse = document.createElement('script');
-        gcse.type = 'text/javascript';
-        gcse.async = true;
-        gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-            '//cse.google.com/cse.js?cx=' + cx;
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(gcse, s);
-      })();
-    </script>
-    <div class="sidebar">
-      <gcse:searchbox></gcse:searchbox>
-    </div>
+    <form method = "post" action = "/results">
+      Please enter your search <input type = "text" name = "query">
+      <input type = "submit">
+    </form>
 
-    <div class="main-content">
-      <gcse:searchresults></gcse:searchresults>
-    </div>
-</form>
   </body>
 </html>
