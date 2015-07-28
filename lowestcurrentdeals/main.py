@@ -24,6 +24,7 @@ import jinja2
 import json
 import urllib2
 from google.appengine.api import urlfetch
+from google.appengine.api import users
 
 jinja_environment=jinja2.Environment(
     loader=jinja2.FileSystemLoader(
@@ -32,6 +33,17 @@ jinja_environment=jinja2.Environment(
 # handles input for searches
 class SearchHandler(webapp2.RequestHandler):
     def get(self):
+
+        user = users.get_current_user()
+        if user:
+            greeting = ('Welcome, %s! (<a href="%s">sign out</a>)' %
+                        (user.nickname(), users.create_logout_url('/')))
+        else:
+            greeting = ('<a href="%s">Sign in or register</a>.' %
+                        users.create_login_url('/'))
+
+        self.response.out.write('<html><body>%s</body></html>' % greeting)
+
         template = jinja_environment.get_template('/templates/search.html')
         self.response.write(template.render())
 
