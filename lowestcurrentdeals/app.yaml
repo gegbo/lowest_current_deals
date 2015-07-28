@@ -11,6 +11,9 @@ handlers:
 
 - url: .*
   script: main.app
+  login: required
+  auth_fail_action: redirect
+
 
 libraries:
 - name: jinja2
