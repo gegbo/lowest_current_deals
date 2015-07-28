@@ -21,21 +21,40 @@
 import webapp2
 import os
 import jinja2
+import json
+import urllib2
+from test_settings import *
+from amazon.api import AmazonAPI
 
 jinja_environment=jinja2.Environment(
     loader=jinja2.FileSystemLoader(
         os.path.dirname(__file__)))
 
 # handles input for searches
-class SearchHandler(webapp2.RequestHandler):
+class ResultHandler(webapp2.RequestHandler):
     def get(self):
+        search = 'iPhone 6'
+        amazon = AmazonAPI(AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_ASSOC_TAG)
+        amazon_results = amazon.search_n(15, Keywords=search, SearchIndex='All')
         template = jinja_environment.get_template('/templates/search.html')
-        self.response.write(template.render())
+        best_buy_url = 'http://api.remix.bestbuy.com/v1/products(search='+ search.replace(' ', '&search=')+')?format=json&show=sku,name,salePrice,url,image&pageSize=15&page=5&apiKey=24ta6vtsr78a22fmv8ngfjet'
+        best_buy_results = json.load(urllib2.urlopen(best_buy_url)).get('products')
+        walmart_url = "http://api.walmartlabs.com/v1/search?query=%s&format=json&apiKey=cz9kfm3vuhssnk6hn33zg86k&responseGroup=base" % search.replace(' ','+')
+        walmart_results = json.load(urllib2.urlopen(walmart_url)).get('items')
+        results = []
+        for product in amazon_results:
+            results += [(product.title, product.price_and_currency[0], product.offer_url, product.large_image_url, 'Amazon')]
+        for product in best_buy_results:
+            results += [(product.get('name'), product.get('salePrice'), product.get('url'), product.get('image'), 'Best Buy')]
+        for product in walmart_results:
+            results += [(product.get('name'), product.get('salePrice'), product.get('productUrl'), product.get('thumbnailImage'), 'Walmart')]
+        results = sorted(results,key=lambda x: x[1])
+        self.response.write(results)
 
 #displays search results on a new page /results
 # with GCSE, it's also possible to display the search bar and results on the same page,
 # instead of two pages as it is here.
-class ResultHandler(webapp2.RequestHandler):
+class SearchHandler(webapp2.RequestHandler):
     def get(self):
         template=jinja_environment.get_template('/templates/results.html')
         template_variables={"user_search":self.request.get('search')}
