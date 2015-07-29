@@ -50,6 +50,6 @@ p,h1{
 
 
 }
-a:link{
+a:link, a:visited{
   color:#000000
 }
