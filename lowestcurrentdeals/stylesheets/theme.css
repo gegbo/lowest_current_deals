@@ -32,11 +32,16 @@ p,h1{
   margin-right: auto
 }
 #searchbar{
-  margin-right:300px;
-  width:350px;
+  position:absolute;
+/*  margin-right:300px;*/
+ margin-left:40%;
+  width:30%;
 }
 #searchsubmit{
-  margin-left:575px;
+  position:absolute;
+  margin-top:2%;
+  margin-left:52%;
+
 
 }
 #wishlist{
