@@ -114,7 +114,10 @@ class WishListHandler(webapp2.RequestHandler):
 
             walmart = WishList(user_id = person_id, store = store_type, item_id = product_id,name = walmart_name, price = sales_Price, image = walmart_image_source, url = walmart_link_to_buy)
 
-            walmart.put()
+            check_product=WishList.query(WishList.user_id==person_id,WishList.item_id==product_id).get()
+            if check_product == None:
+                walmart.put()
+
 
         if store_type.lower() == "bestbuy":
             bestbuy_url=("http://api.remix.bestbuy.com/v1/products/%s.json?show=sku,name,salePrice,url,image&apiKey=24ta6vtsr78a22fmv8ngfjet" %product_id)
@@ -130,10 +133,15 @@ class WishListHandler(webapp2.RequestHandler):
 
             bestbuy = WishList(user_id = person_id, store = store_type, item_id = product_id,name = bestbuy_name, price = bestbuy_Price, image = bestbuy_image_source, url = bestbuy_link_to_buy)
 
-            bestbuy.put()
+            check_product=WishList.query(WishList.user_id==person_id,WishList.item_id==product_id).get()
+            if check_product == None:
+                bestbuy.put()
+
+        if store_type.lower == "amazon":
+            self.response.write("Didnt put in dictionary yet!")
 
         template=jinja_environment.get_template('/templates/wishlist.html')
-        self.response.write(template.render())
+        self.response.write(template.render({'wishlist' : WishList.query(WishList.user_id==person_id).fetch()}))
 
 app = webapp2.WSGIApplication([
     ('/', SearchHandler),

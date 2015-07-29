@@ -6,7 +6,15 @@
     <h1>Your Wishlist</h1>
 
   <!--once user is implented, if not user-->
-  <p>No wishlist available.</p>
-
+  {% for result in wishlist %}
+  <div>{{result.image}} {{result.name}}
+  Sale Price: {{result.price}}
+  <a href='{{result.url}}'>Buy from {{result.store}}</a>
+  </div>
+  {% endfor %}
+  <br>
+  <form method = "get" action = "/">
+    <input type = "submit" value = "Back to search">
+  </form>
   </body>
 </html>
