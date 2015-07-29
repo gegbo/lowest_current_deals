@@ -41,6 +41,7 @@ class WishList(ndb.Model):
     price = ndb.StringProperty()
     image = ndb.StringProperty()
     url = ndb.StringProperty()
+    removeUrl = ndb.StringProperty()
 
 # handles input for searches
 class SearchHandler(webapp2.RequestHandler):
@@ -110,7 +111,9 @@ class WishListHandler(webapp2.RequestHandler):
 
             walmart_link_to_buy = walmart_JSON_string["productUrl"]
 
-            walmart = WishList(user_id = person_id, store = store_type, item_id = product_id,name = walmart_name, price = sales_Price, image = walmart_image_source, url = walmart_link_to_buy)
+            walmart_link_to_remove = "/remove?id=%s" %product_id
+
+            walmart = WishList(user_id = person_id, store = store_type, item_id = product_id,name = walmart_name, price = sales_Price, image = walmart_image_source, url = walmart_link_to_buy,removeUrl=walmart_link_to_remove)
 
             check_product=WishList.query(WishList.user_id==person_id,WishList.item_id==product_id).get()
             if check_product == None:
@@ -129,7 +132,9 @@ class WishListHandler(webapp2.RequestHandler):
 
             bestbuy_link_to_buy = bestbuy_JSON_string["url"]
 
-            bestbuy = WishList(user_id = person_id, store = store_type, item_id = product_id,name = bestbuy_name, price = bestbuy_Price, image = bestbuy_image_source, url = bestbuy_link_to_buy)
+            bestbuy_link_to_remove = "/remove?id=%s" %product_id
+
+            bestbuy = WishList(user_id = person_id, store = store_type, item_id = product_id,name = bestbuy_name, price = bestbuy_Price, image = bestbuy_image_source, url = bestbuy_link_to_buy,removeUrl=bestbuy_link_to_remove)
 
             check_product=WishList.query(WishList.user_id==person_id,WishList.item_id==product_id).get()
             if check_product == None:
@@ -141,8 +146,23 @@ class WishListHandler(webapp2.RequestHandler):
         template=jinja_environment.get_template('/templates/wishlist.html')
         self.response.write(template.render({'wishlist' : WishList.query(WishList.user_id==person_id).fetch()}))
 
+class RemoveHandler(webapp2.RequestHandler):
+    def removeItem(self,person_id,thing_id):
+        product = WishList.query(WishList.user_id==person_id,WishList.item_id==thing_id).get()
+
+        product.key.delete()
+
+    def get(self):
+
+        user = users.get_current_user()
+        person_id = user.user_id()
+
+        self.removeItem(person_id,self.request.get('id'))
+
+
 app = webapp2.WSGIApplication([
     ('/', SearchHandler),
     ('/results',ResultHandler),
-    ('/wishlist',WishListHandler)
+    ('/wishlist',WishListHandler),
+    ('/remove', RemoveHandler)
 ], debug=True)
