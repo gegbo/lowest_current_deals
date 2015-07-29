@@ -1,27 +1,30 @@
+
 <!DOCTYPE html>
 
 <html>
   <head>
-    <a href= "/wishlist">Go to my Wishlist</a>
     <title>Results</title>
   </head>
   <body>
-    <h1>Results</h1>
+    {% if user %}
+    <a href= "/wishlist">Go to my Wishlist</a>
+    {% endif %}
+    <h2>Results</h2>
+    <form method = "get" action = "/results">
+      <input type = "text" name = "search">
+      <input type = "submit" value = "Find LCD">
+    </form>
     <!--Placeholder for GCSE results-->
     <h2>Your search for {{user_search}} returned:</h2>
-
-
-      {% for i in bestbuy %}
-
-      {{i}}
+      {% for result in results %}
+      <div><img src='{{result[3]}}'> {{result[0]}}<br>
+      Sale Price: {{result[1]}} <br>
+      <a href='{{result[2]}}'>Buy from {{result[4]}}</a>
+      </div>
       {% endfor %}
-
       <br>
-
-      {% for i in walmart %}
-
-      {{i}}
-      {% endfor %}
-
+      <form method = "get" action = "/">
+        <input type = "submit" value = "Back to search">
+      </form>
   </body>
 </html>

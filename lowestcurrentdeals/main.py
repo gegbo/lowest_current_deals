@@ -23,6 +23,8 @@ import os
 import jinja2
 import json
 import urllib2
+from test_settings import *
+from amazon.api import AmazonAPI
 from google.appengine.api import urlfetch
 from google.appengine.api import users
 
@@ -33,7 +35,7 @@ jinja_environment=jinja2.Environment(
 # handles input for searches
 class SearchHandler(webapp2.RequestHandler):
     def get(self):
-
+        template = jinja_environment.get_template('templates/search.html')
         user = users.get_current_user()
         if user:
             greeting = ('Welcome, %s! (<a href="%s">sign out</a>)' %
@@ -42,60 +44,36 @@ class SearchHandler(webapp2.RequestHandler):
             greeting = ('<a href="%s">Sign in or register</a>.' %
                         users.create_login_url('/'))
 
-        self.response.out.write('<html><body>%s</body></html>' % greeting)
-
-        template = jinja_environment.get_template('/templates/search.html')
-        self.response.write(template.render())
+        self.response.out.write(template.render({'user' : user, 'greeting' : greeting}))
 
 #displays search results on a new page /results
+# with GCSE, it's also possible to display the search bar and results on the same page,
+# instead of two pages as it is here.
+class ResultHandler(webapp2.RequestHandler):
 # In the finished product, searches will display products matching the
 # user's search from Best Buy, Walmart, Amazon
 # via their respective APIs
-
-class ResultHandler(webapp2.RequestHandler):
     def get(self):
+        search = self.request.get('search')
+        amazon = AmazonAPI(AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_ASSOC_TAG)
+        amazon_results = amazon.search_n(15, Keywords=search, SearchIndex='All')
         template=jinja_environment.get_template('/templates/results.html')
-        template_variables={"user_search":self.request.get('search').replace(" ","%20")}
-        self.response.write(template.render(template_variables))
         # returns in JSON name, salePrice, and URL of user's search from BestBuy
-        bestbuy_url='http://api.remix.bestbuy.com/v1/products(search='+template_variables["user_search"]+')?format=json&show=sku,name,salePrice,url,image&apiKey=24ta6vtsr78a22fmv8ngfjet'
-        bestbuy_JSON_string=json.load(urllib2.urlopen(bestbuy_url))
+        best_buy_url = 'http://api.remix.bestbuy.com/v1/products(search='+ search.replace(' ', '&search=')+')?format=json&show=sku,name,salePrice,url,image&pageSize=15&page=5&apiKey=24ta6vtsr78a22fmv8ngfjet'
+        best_buy_results = json.load(urllib2.urlopen(best_buy_url)).get('products')
+        walmart_url = "http://api.walmartlabs.com/v1/search?query=%s&format=json&apiKey=cz9kfm3vuhssnk6hn33zg86k&responseGroup=base" % search.replace(' ','+')
+        walmart_results = json.load(urllib2.urlopen(walmart_url)).get('items')
+        results = []
+        for product in amazon_results:
+            results += [(product.title, product.price_and_currency[0], product.offer_url, product.large_image_url, 'Amazon')]
+        for product in best_buy_results:
+            results += [(product.get('name'), product.get('salePrice'), product.get('url'), product.get('image'), 'Best Buy')]
+        for product in walmart_results:
+            results += [(product.get('name'), product.get('salePrice'), product.get('productUrl'), product.get('thumbnailImage'), 'Walmart')]
+        results = sorted(results,key=lambda x: x[1])
+        template_variables={"user_search":search, 'results':results}
+        self.response.write(template.render(template_variables))
 
-        walmart_url="http://api.walmartlabs.com/v1/search?query="+template_variables["user_search"]+"&format=json&numitems=10&apiKey=cz9kfm3vuhssnk6hn33zg86k"
-        walmart_JSON_string=json.load(urllib2.urlopen(walmart_url))
-
-
-
-
-        # handles walmart output
-        j=0
-        while j<(len(walmart_JSON_string)-1):
-            j+=1
-            walmart_name=walmart_JSON_string["items"][j]["name"]
-            self.response.out.write(walmart_name)
-
-            walmart_image_source=walmart_JSON_string["items"][j]["thumbnailImage"]
-            self.response.out.write(("<img src=%s>")%(walmart_image_source))
-
-            self.response.write('Sale Price: '+str(walmart_JSON_string["items"][j]["salePrice"])+"&nbsp;")
-            walmart_link_to_buy=str(walmart_JSON_string["items"][j]["productUrl"])
-            self.response.write(("<a href=%s>Buy</a>")%walmart_link_to_buy)
-            self.response.write("<br>")
-            
-        # handles BestBuy output
-        i=0
-        while i<(len(bestbuy_JSON_string)-1):
-
-            i+=1
-            bestbuy_name=bestbuy_JSON_string["products"][i]['name']
-            self.response.out.write(bestbuy_name+"&nbsp;")
-
-            bestbuy_image_source=bestbuy_JSON_string["products"][i]["image"]
-            self.response.write(("<img src=%s>")%(bestbuy_image_source))
-            self.response.write('Sale Price: '+str(bestbuy_JSON_string["products"][i]["salePrice"])+"&nbsp;")
-            link_to_buy=str(bestbuy_JSON_string["products"][i]["url"])
-            self.response.write(("<a href=%s>Buy</a>")%link_to_buy)
-            self.response.write("<br>")
 
 
 class WishListHandler(webapp2.RequestHandler):
