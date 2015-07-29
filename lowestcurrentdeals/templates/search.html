@@ -2,17 +2,22 @@
 
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href='stylesheets/theme.css'>
     <title>Product Search</title>
+    <h1>  {% if user %}
+        <a href= "/wishlist" id="wishlist" style="text-decoration:none">Go to my Wishlist</a>
+        {% endif %}
   </head>
   <body>
-    {% if user %}
+  <!--  {% if user %}
     <a href= "/wishlist">Go to my Wishlist</a>
-    {% endif %}
+    {% endif %} -->
     <h1>{{greeting}}</h1>
-    <h1>Product Search<h1>
+
+    <img src="../images/Logo.png" id="logo">
     <form method = "get" action = "/results">
-      <input type = "text" name = "search">
-      <input type = "submit" value = "Find LCD">
+      <input type = "text" name = "search" id="searchbar"><br>
+      <input type = "submit" value = "Find LCD" id="searchsubmit">
     </form>
   </body>
 </html>

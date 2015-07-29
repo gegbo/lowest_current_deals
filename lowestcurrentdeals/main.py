@@ -57,8 +57,6 @@ class SearchHandler(webapp2.RequestHandler):
         self.response.out.write(template.render({'user' : user, 'greeting' : greeting}))
 
 #displays search results on a new page /results
-# with GCSE, it's also possible to display the search bar and results on the same page,
-# instead of two pages as it is here.
 class ResultHandler(webapp2.RequestHandler):
 # In the finished product, searches will display products matching the
 # user's search from Best Buy, Walmart, Amazon
