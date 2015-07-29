@@ -17,9 +17,10 @@
     <!--Placeholder for GCSE results-->
     <h2>Your search for {{user_search}} returned:</h2>
       {% for result in results %}
-      <div><img src='{{result[3]}}'> {{result[0]}}<br>
-      Sale Price: {{result[1]}} <br>
+      <div><img src='{{result[3]}}  '> {{result[0]}}
+      Sale Price: {{result[1]  }}
       <a href='{{result[2]}}'>Buy from {{result[4]}}</a>
+      <a href='{{result[5]}}'>Add to Wishlist</a>
       </div>
       {% endfor %}
       <br>
