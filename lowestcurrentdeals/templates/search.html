@@ -2,31 +2,17 @@
 
 <html>
   <head>
-    <title>Find LCD</title>
+    <title>Product Search</title>
   </head>
   <body>
+    {% if user %}
     <a href= "/wishlist">Go to my Wishlist</a>
-    <h1>Lowest Current Deal</h1>
-
-    <script>
-      (function() {
-        var cx = '017572303234095721313:sfzac6xgrti';
-        var gcse = document.createElement('script');
-        gcse.type = 'text/javascript';
-        gcse.async = true;
-        gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-            '//cse.google.com/cse.js?cx=' + cx;
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(gcse, s);
-      })();
-    </script>
-    <div class="sidebar">
-      <gcse:searchbox></gcse:searchbox>
-    </div>
-
-    <div class="main-content">
-      <gcse:searchresults></gcse:searchresults>
-    </div>
-</form>
+    {% endif %}
+    <h1>{{greeting}}</h1>
+    <h1>Product Search<h1>
+    <form method = "get" action = "/results">
+      <input type = "text" name = "search">
+      <input type = "submit" value = "Find LCD">
+    </form>
   </body>
 </html>
