@@ -5,16 +5,14 @@
     <title>Product Search</title>
   </head>
   <body>
+    {% if user %}
     <a href= "/wishlist">Go to my Wishlist</a>
-    <h1>Product Search
-
-
+    {% endif %}
+    <h1>{{greeting}}</h1>
+    <h1>Product Search<h1>
     <form method = "get" action = "/results">
-       <input type = "text" name = "search">
+      <input type = "text" name = "search">
       <input type = "submit" value = "Find LCD">
     </form>
-
-
-</form>
   </body>
 </html>
