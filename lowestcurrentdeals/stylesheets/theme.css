@@ -16,15 +16,28 @@ p,h1{
 }
 
 #logo{
+  padding-top:175px;
+  height:175px;
+  width:auto;
   display: block;
   margin-left: auto;
   margin-right: auto
+
 }
+
 
 #searchbar, #searchsubmit{
   display: block;
   margin-left: auto;
   margin-right: auto
+}
+#searchbar{
+  margin-right:300px;
+  width:350px;
+}
+#searchsubmit{
+  margin-left:575px;
+
 }
 #wishlist{
   float:right;
