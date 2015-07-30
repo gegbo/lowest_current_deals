@@ -33,6 +33,7 @@ from google.appengine.api import mail
 
 
 
+
 jinja_environment=jinja2.Environment(
     loader=jinja2.FileSystemLoader(
         os.path.dirname(__file__)))
@@ -47,6 +48,7 @@ class WishList(ndb.Model):
     url = ndb.StringProperty()
     removeUrl = ndb.StringProperty()
     upc_id = ndb.StringProperty()
+    compare_url = ndb.StringProperty()
 
 
 # handles input for searches
@@ -74,7 +76,7 @@ class ResultHandler(webapp2.RequestHandler):
         amazon_results = amazon.search_n(15, Keywords=search, SearchIndex='All')
 
         # returns in JSON name, salePrice, and URL of user's search from BestBuy
-        best_buy_url = 'http://api.remix.bestbuy.com/v1/products(search='+ search.replace(' ', '&search=')+')?format=json&show=sku,name,salePrice,url,image&pageSize=15&page=5&apiKey=24ta6vtsr78a22fmv8ngfjet'
+        best_buy_url = 'http://api.remix.bestbuy.com/v1/products(search='+ search.replace(' ', '&search=')+')?format=json&show=sku,name,salePrice,url,image,upc&pageSize=15&page=5&apiKey=24ta6vtsr78a22fmv8ngfjet'
         best_buy_results = json.load(urllib2.urlopen(best_buy_url)).get('products')
 
         walmart_url = "http://api.walmartlabs.com/v1/search?query=%s&format=json&apiKey=cz9kfm3vuhssnk6hn33zg86k&responseGroup=base" % search.replace(' ','+')
@@ -82,12 +84,13 @@ class ResultHandler(webapp2.RequestHandler):
 
         results = []
         for product in amazon_results:
-            results += [(product.title, product.price_and_currency[0], product.offer_url, product.medium_image_url, 'Amazon','/wishlist?type=amazon&id=%s'%product.asin, '/email?producturl=%s'%product.offer_url)]
+            results += [(product.title, product.price_and_currency[0], product.offer_url, product.medium_image_url, 'Amazon','/wishlist?type=amazon&id=%s'%product.asin,"/compare?upc=%s" %str(product.upc), '/email?producturl=%s'%product.offer_url)]
             #How to retrive asin for amazon products and decrease image size
         for product in best_buy_results:
-            results += [(product.get('name'), product.get('salePrice'), product.get('url'), product.get('image'), 'Best Buy','/wishlist?type=bestbuy&id=%s'%product.get('sku'), '/email?producturl=%s'%product.get('url'))]
+            results += [(product.get('name'), product.get('salePrice'), product.get('url'), product.get('image'), 'Best Buy','/wishlist?type=bestbuy&id=%s'%product.get('sku'),"/compare?upc=%s" %str(product.get('upc')), '/email?producturl=%s'%product.get('url'))]
         for product in walmart_results:
-            results += [(product.get('name'), product.get('salePrice'), product.get('productUrl'), product.get('thumbnailImage'), 'Walmart','/wishlist?type=walmart&id=%s'%product.get('itemId'),'/email?producturl=%s'%product.get('productUrl'))]
+            results += [(product.get('name'), product.get('salePrice'), product.get('productUrl'), product.get('thumbnailImage'), 'Walmart','/wishlist?type=walmart&id=%s'%product.get('itemId'),"/compare?upc=%s" %str(product.get('upc')),'/email?producturl=%s'%product.get('productUrl'))]
+
         results = sorted(results,key=lambda x: x[1])
         template_variables={"user_search":search, 'results':results}
 
@@ -125,12 +128,15 @@ class WishListHandler(webapp2.RequestHandler):
 
             walmart_upc = str(walmart_JSON_string["upc"])
 
+            walmart_compare_upc = "/compare?upc=%s" %str(walmart_JSON_string["upc"])
+
 
             check_product=WishList.query(WishList.user_id==person_id,WishList.item_id==product_id).get()
 
             if check_product == None:
 
                 walmart = WishList(user_id = person_id, store = store_type, item_id = product_id,name = walmart_name, price = sales_Price, image = walmart_image_source, url = walmart_link_to_buy,removeUrl=walmart_link_to_remove,upc_id=walmart_upc)
+                walmart = WishList(user_id = person_id, store = store_type, item_id = product_id,name = walmart_name, price = sales_Price, image = walmart_image_source, url = walmart_link_to_buy,removeUrl=walmart_link_to_remove,compare_url=walmart_compare_upc)
 
                 walmart.put()
                 item_to_add = walmart
@@ -156,7 +162,11 @@ class WishListHandler(webapp2.RequestHandler):
 
             check_product=WishList.query(WishList.user_id==person_id,WishList.item_id==product_id).get()
             if check_product == None:
-                bestbuy = WishList(user_id = person_id, store = store_type, item_id = product_id,name = bestbuy_name, price = bestbuy_Price, image = bestbuy_image_source, url = bestbuy_link_to_buy,removeUrl=bestbuy_link_to_remove,upc_id = bestbuy_upc)
+                bestbuy = WishList(user_id = person_id, store = store_type, item_id = product_id,name = bestbuy_name, price = bestbuy_Price, image = bestbuy_image_source, url = bestbuy_link_to_buy,removeUrl=bestbuy_link_to_remove,upc_id = bestbuy_upc,bestbuy_compare_upc = "/compare?upc=%s" %str(bestbuy_JSON_string["upc"]))
+
+            check_product=WishList.query(WishList.user_id==person_id,WishList.item_id==product_id).get()
+            if check_product == None:
+                bestbuy = WishList(user_id = person_id, store = store_type, item_id = product_id,name = bestbuy_name, price = bestbuy_Price, image = bestbuy_image_source, url = bestbuy_link_to_buy,removeUrl=bestbuy_link_to_remove,compare_url = bestbuy_compare_upc)
 
                 bestbuy.put()
                 item_to_add = bestbuy
@@ -180,6 +190,18 @@ class WishListHandler(webapp2.RequestHandler):
             check_product=WishList.query(WishList.user_id==person_id,WishList.item_id==product_id).get()
             if check_product == None:
                 amazon = WishList(user_id = person_id, store = store_type, item_id = product_id,name = amazon_name, price = amazon_Price, image = amazon_image_source, url = amazon_link_to_buy,removeUrl=amazon_link_to_remove,upc_id = amazon_upc)
+
+            amazon_Price = str(product.price_and_currency[0])
+
+            amazon_link_to_buy = product.offer_url
+
+            amazon_link_to_remove = "/remove?id=%s" %product_id
+
+            amazon_compare_upc = "/compare?upc=%s" %str(product.upc)
+
+            check_product=WishList.query(WishList.user_id==person_id,WishList.item_id==product_id).get()
+            if check_product == None:
+                amazon = WishList(user_id = person_id, store = store_type, item_id = product_id,name = amazon_name, price = amazon_Price, image = amazon_image_source, url = amazon_link_to_buy,removeUrl=amazon_link_to_remove,compare_url = amazon_compare_upc)
 
                 amazon.put()
                 item_to_add = amazon
@@ -207,22 +229,63 @@ class RemoveHandler(webapp2.RequestHandler):
         self.response.write(template.render())
 
 class EmailHandler(webapp2.RequestHandler):
-    def post(self):
-            template = jinja_environment.get_template('templates/emailsent.html')
-            user=users.get_current_user()
-            user_address = user.email()
-            sender_address = "Example.com Support <support@example.com>"
-            subject = "Product From LCD"
-            body = """
 
-Buy Here: %s
+    def get (self):
+        template = jinja_environment.get_template("/templates/emailsent.html")
+        self.response.write(template.render())
+
+        template = jinja_environment.get_template('templates/emailsent.html')
+        user=users.get_current_user()
+        user_address = user.email()
+        sender_address = user.email()
+        subject = "Product From LCD"
+        body = """
+
+        Buy Here: %s
 
 """ %(self.request.get('producturl'))
 
-            mail.send_mail(sender_address, user_address, subject, body)
-            self.response.write(template.render())
+        mail.send_mail(sender_address, user_address, subject, body)
+    
 
 
+class CompareHandler(webapp2.RequestHandler):
+    def get(self):
+        upc_num = self.request.get('upc')
+
+        items = []
+
+        # Add equivalent bestbuy item to a list x
+        bestbuy_item=("http://api.remix.bestbuy.com/v1/products(upc=%s)?show=sku,name,salePrice,upc,url,image&apiKey=24ta6vtsr78a22fmv8ngfjet&format=json" %upc_num)
+        bestbuy_JSON_string=json.load(urllib2.urlopen(bestbuy_item))
+
+        #checks if list is empty, if it is it wont add to items list
+        if len(bestbuy_JSON_string['products']) >0:
+
+            logging.info('Item added to list')
+            items += [(bestbuy_JSON_string['products'][0]['name'], bestbuy_JSON_string['products'][0]['salePrice'], bestbuy_JSON_string['products'][0]['url'], bestbuy_JSON_string['products'][0]['image'], 'Best Buy','/wishlist?type=bestbuy&id=%s'%bestbuy_JSON_string['products'][0]['sku'])]
+
+        #Adds equivalent walmart item to a list
+        walmart_item=("http://api.walmartlabs.com/v1/items?apiKey=cz9kfm3vuhssnk6hn33zg86k&upc=%s&format=json" %upc_num)
+
+        try:
+            walmart_JSON_string=json.load(urllib2.urlopen(walmart_item))
+
+            items += [(walmart_JSON_string['items'][0]['name'], walmart_JSON_string['items'][0]['salePrice'], walmart_JSON_string['items'][0]['productUrl'], walmart_JSON_string['items'][0]['thumbnailImage'], 'Walmart','/wishlist?type=walmart&id=%s'%walmart_JSON_string['items'][0]['itemId'])]
+        except urllib2.HTTPError:
+            pass
+
+        #Adds equivalent amazon item to a list
+        amazon = AmazonAPI(AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_ASSOC_TAG) #initiates a new Amazon API
+        amazon_results = amazon.search_n(1,Keywords=upc_num, SearchIndex='All')
+
+
+        if len(amazon_results) > 0:
+            items += [(amazon_results[0].title,
+            amazon_results[0].price_and_currency[0],amazon_results[0].offer_url,amazon_results[0].medium_image_url,'amazon','/wishlist?type=amazon&id=%s'%amazon_results[0].asin)]
+        template=jinja_environment.get_template('/templates/compare.html')
+        template_variables={'results':items}
+        self.response.write(template.render(template_variables))
 
 
 app = webapp2.WSGIApplication([
@@ -230,5 +293,6 @@ app = webapp2.WSGIApplication([
     ('/results',ResultHandler),
     ('/wishlist',WishListHandler),
     ('/remove', RemoveHandler),
-    ('/email',EmailHandler)
+    ('/email',EmailHandler),
+    ('/compare',CompareHandler)
 ], debug=True)

@@ -1,27 +1,22 @@
-
-<!DOCTYPE html>
-
 <html>
   <head>
-    <title>Results</title>
+    <title>Compare Results</title>
   </head>
   <body>
     {% if user %}
     <a href= "/wishlist">Go to my Wishlist</a>
     {% endif %}
-    <h2>Results</h2>
     <form method = "get" action = "/results">
       <input type = "text" name = "search">
       <input type = "submit" value = "Find LCD">
     </form>
-    <!--Placeholder for GCSE results-->
-    <h2>Your search for {{user_search}} returned:</h2>
+
+    <h2>Comparison Results</h2>
       {% for result in results %}
       <div><img src='{{result[3]}}  '> {{result[0]}}
       Sale Price: {{result[1]  }}
       <a href='{{result[2]}}'>Buy from {{result[4]}}</a>
-      <a href='{{result[7]}}'>Email Product Link</a>
-      <a href={{result[6]}}>Find Lowest Price</a>
+      <a href={{result[5]}}>Add to my Wishlist</a>
       </div>
       {% endfor %}
       <br>

@@ -553,9 +553,11 @@ class AmazonSearch(object):
             msg = root.Items.Request.Errors.Error.Message
             if code == 'AWS.ParameterOutOfRange':
                 raise NoMorePages(msg)
-            else:
-                raise SearchException(
-                    "Amazon Search Error: '{0}', '{1}'".format(code, msg))
+            # Didn't want the exception messages
+            # else:
+            #     break
+            # raise SearchException(
+            #     "Amazon Search Error: '{0}', '{1}'".format(code, msg))
         return root
 
 
