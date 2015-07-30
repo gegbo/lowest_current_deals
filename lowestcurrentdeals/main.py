@@ -29,6 +29,8 @@ from amazon.api import AmazonAPI
 from google.appengine.api import urlfetch
 from google.appengine.api import users
 from google.appengine.ext import ndb
+from google.appengine.api import mail
+
 
 
 jinja_environment=jinja2.Environment(
@@ -80,12 +82,12 @@ class ResultHandler(webapp2.RequestHandler):
 
         results = []
         for product in amazon_results:
-            results += [(product.title, product.price_and_currency[0], product.offer_url, product.medium_image_url, 'Amazon','/wishlist?type=amazon&id=%s'%product.asin)]
+            results += [(product.title, product.price_and_currency[0], product.offer_url, product.medium_image_url, 'Amazon','/wishlist?type=amazon&id=%s'%product.asin, '/email?producturl=%s'%product.offer_url)]
             #How to retrive asin for amazon products and decrease image size
         for product in best_buy_results:
-            results += [(product.get('name'), product.get('salePrice'), product.get('url'), product.get('image'), 'Best Buy','/wishlist?type=bestbuy&id=%s'%product.get('sku'))]
+            results += [(product.get('name'), product.get('salePrice'), product.get('url'), product.get('image'), 'Best Buy','/wishlist?type=bestbuy&id=%s'%product.get('sku'), '/email?producturl=%s'%product.get('url'))]
         for product in walmart_results:
-            results += [(product.get('name'), product.get('salePrice'), product.get('productUrl'), product.get('thumbnailImage'), 'Walmart','/wishlist?type=walmart&id=%s'%product.get('itemId'))]
+            results += [(product.get('name'), product.get('salePrice'), product.get('productUrl'), product.get('thumbnailImage'), 'Walmart','/wishlist?type=walmart&id=%s'%product.get('itemId'),'/email?producturl=%s'%product.get('productUrl'))]
         results = sorted(results,key=lambda x: x[1])
         template_variables={"user_search":search, 'results':results}
 
@@ -204,10 +206,29 @@ class RemoveHandler(webapp2.RequestHandler):
         template=jinja_environment.get_template('/templates/remove.html')
         self.response.write(template.render())
 
+class EmailHandler(webapp2.RequestHandler):
+    def post(self):
+            template = jinja_environment.get_template('templates/emailsent.html')
+            user=users.get_current_user()
+            user_address = user.email()
+            sender_address = "Example.com Support <support@example.com>"
+            subject = "Product From LCD"
+            body = """
+
+Buy Here: %s
+
+""" %(self.request.get('producturl'))
+
+            mail.send_mail(sender_address, user_address, subject, body)
+            self.response.write(template.render())
+
+
+
 
 app = webapp2.WSGIApplication([
     ('/', SearchHandler),
     ('/results',ResultHandler),
     ('/wishlist',WishListHandler),
-    ('/remove', RemoveHandler)
+    ('/remove', RemoveHandler),
+    ('/email',EmailHandler)
 ], debug=True)
