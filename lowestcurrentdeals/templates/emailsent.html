@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href='assets/style.css'>
+    <link href='http://fonts.googleapis.com/css?family=Rancho' rel='stylesheet' type='text/css'>
+    <title>Email Sent!</title>
+  </head>
+  <body>
+    <div id = 'header'>
+    {% if user %}
+    <a href='{{logout}}'>
+      <div class = 'header_part'>
+        Log Out
+      </div>
+    </a>
+    <a href= "/wishlist">
+      <div class = 'header_part'>
+        Go to my Wishlist
+      </div>
+    </a>
+    {% else %}
+    <a href='{{login}}'>
+      <div class = 'header_part'>
+        Sign In or Register
+      </div>
+    </a>
+    {% endif %}
+    <a href= "/">
+    <img id = 'search_logo' src = 'assets/logo.png'>
+  </a>
+    <div id = 'search_bar'>
+      <form method = "get" action = "/results">
+        <input id='search' type = "text" name = "search"
+        ><input id='submit' type = "submit" value = "Find LCD">
+      </form>
+    </div>
+  </div>
+  <div id = 'contents'>
+  <div id = 'results'>
+      <h2>Email Sent</h2>
+    </div>
+  <br>
+    <form method = "get" action = "/">
+      <input class = 'button' type = "submit" value = "Back to search">
+    </form>
+    <br>
+  </div>
+  </body>
+</html>

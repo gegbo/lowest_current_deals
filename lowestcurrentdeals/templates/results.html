@@ -37,16 +37,16 @@
       </form>
     </div>
   </div>
-    </div>
     <div id = 'contents'>
     <div id = 'results'>
     <h2>Your search for {{user_search}} returned:</h2>
   </div>
       {% for result in results %}
       <div class = 'result'><img class = 'result_image' src='{{result[3]}}'><div class = 'information'> {{result[0]}}<br>
-      Sale Price: {{result[1]}} <br>
-      <a href='{{result[2]}}'><input class = 'button' type = 'button' value = 'Buy from {{result[4]}}'></a> <br>
-      <a href='{{result[5]}}'><input class = 'button' type = 'button' value = 'Add to Wishlist'></a>
+      Sale Price: ${{result[1]}} <br>
+      <a href='{{result[2]}}'><input class = 'button' type = 'button' value = 'Buy from {{result[4]}}'></a><br>
+      <a href='{{result[7]}}'><input class = 'button' type = 'button' value = 'Email Product Link'></a><br>
+      <a href={{result[6]}}><input class = 'button' type = 'button' value = 'Find Lowest Price'></a>
     </div>
       </div>
       {% endfor %}

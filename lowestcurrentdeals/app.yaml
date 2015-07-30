@@ -19,6 +19,8 @@ handlers:
 
 
 libraries:
+- name: ssl
+  version: latest
 - name: lxml
   version: "latest"
 - name: jinja2

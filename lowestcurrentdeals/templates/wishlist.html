@@ -49,7 +49,7 @@
       {% if wishlist %}
       {% for result in wishlist %}
       <div class = 'result'><div class = 'result_image'>{{result.image}}</div><div class = 'information'> {{result.name}}<br>
-      Sale Price: {{result.price}} <br>
+      Sale Price: ${{result.price}} <br>
       <a href='{{result.url}}'><input class = 'button' type = 'button' value = 'Buy from {{result.store.capitalize()}}'></a> <br>
       <a href='{{result.removeUrl}}'><input class = 'button' type = 'button' value = 'Remove from Wishlist'></a>
     </div>
