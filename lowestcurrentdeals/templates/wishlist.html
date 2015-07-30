@@ -5,14 +5,17 @@
   <body>
     <h1>Your Wishlist</h1>
 
-  <!--once user is implented, if not user-->
-  {% for result in wishlist %}
-  <div>{{result.image}} {{result.name}}
-  Sale Price: {{result.price}}
-  <a href='{{result.url}}'>Buy from {{result.store}}</a>
-  <a href='{{result.removeUrl}}'>Remove from Wishlist</a>
-  </div>
-  {% endfor %}
+  {% if not wishlist %}
+    No wishlist items to display <br>
+  {% else %}
+    {% for result in wishlist %}
+    <div>{{result.image}} {{result.name}}
+    Sale Price: {{result.price}}
+    <a href='{{result.url}}'>Buy from {{result.store}}</a>
+    <a href='{{result.removeUrl}}'>Remove from Wishlist</a>
+    </div>
+    {% endfor %}
+  {% endif %}
   <br>
   <form method = "get" action = "/">
     <input type = "submit" value = "Back to search">
