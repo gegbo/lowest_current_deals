@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html>
@@ -26,7 +27,9 @@
       </div>
     </a>
     {% endif %}
+    <a href= "/">
     <img id = 'search_logo' src = 'assets/logo.png'>
+  </a>
     <div id = 'search_bar'>
       <form method = "get" action = "/results">
         <input id='search' type = "text" name = "search"
@@ -42,18 +45,16 @@
       {% for result in results %}
       <div class = 'result'><img class = 'result_image' src='{{result[3]}}'><div class = 'information'> {{result[0]}}<br>
       Sale Price: {{result[1]}} <br>
-      <a href='{{result[2]}}'>Buy from {{result[4]}}</a>
-      <form method = 'post' action = '/wishlist'>
-        <input type = 'hidden' name = 'item' value = '{{result}}'>
-        <input type = 'submit' value = 'Add to Wishlist'>
-      </form>
+      <a href='{{result[2]}}'><input class = 'button' type = 'button' value = 'Buy from {{result[4]}}'></a> <br>
+      <a href='{{result[5]}}'><input class = 'button' type = 'button' value = 'Add to Wishlist'></a>
     </div>
       </div>
       {% endfor %}
       <br>
       <form method = "get" action = "/">
-        <input type = "submit" value = "Back to search">
+        <input class = 'button' type = "submit" value = "Back to search">
       </form>
+      <br>
     </div>
   </body>
 </html>

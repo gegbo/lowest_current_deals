@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <title>Wishlist Removal</title>
+    <link rel="stylesheet" type="text/css" href='assets/style.css'>
+  </head>
+  <body>
+    <body>
+      <div id = 'header'>
+      {% if user %}
+      <a href='{{logout}}'>
+        <div class = 'header_part'>
+          Log Out
+        </div>
+      </a>
+      <a href= "/wishlist">
+        <div class = 'header_part'>
+          Go to my Wishlist
+        </div>
+      </a>
+      {% else %}
+      <a href='{{login}}'>
+        <div class = 'header_part'>
+          Sign In or Register
+        </div>
+      </a>
+      {% endif %}
+      <a href= "/">
+      <img id = 'search_logo' src = 'assets/logo.png'>
+    </a>
+      <div id = 'search_bar'>
+        <form method = "get" action = "/results">
+          <input id='search' type = "text" name = "search"
+          ><input id='submit' type = "submit" value = "Find LCD">
+        </form>
+      </div>
+    </div>
+      <div id = 'results'>
+      <h2>You have successfully removed the item from the wishlist</h2>
+    </div>
+
+  <form method = "get" action = "/wishlist">
+    <input type = "submit" value = "Back to wishlist">
+  </form>
+  </body>
+</html>

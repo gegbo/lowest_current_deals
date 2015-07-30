@@ -1,0 +1,55 @@
+@import url(http://fonts.googleapis.com/css?family=Rancho);
+
+/* Background image from: https://www.elegantthemes.com/blog/freebie-of-the-week/20-free-background-images-for-wordpress*/
+body {
+  /*background-color:#E55A49;*/
+/*  background-color:#5eb3e3 */
+/*background-image: url("Elegant_Background-3.jpg")*/
+    background-image: url("../images/Elegant_Background-5.jpg")
+
+}
+p,h1{
+  color:black;
+  font-size:30px;
+  text-shadow: 2px 2px red;
+  font-family: 'Rancho', cursive;
+}
+
+#logo{
+  padding-top:175px;
+  height:175px;
+  width:auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto
+
+}
+
+
+#searchbar, #searchsubmit{
+  display: block;
+  margin-left: auto;
+  margin-right: auto
+}
+#searchbar{
+  position:absolute;
+/*  margin-right:300px;*/
+ margin-left:40%;
+  width:30%;
+}
+#searchsubmit{
+  position:absolute;
+  margin-top:2%;
+  margin-left:52%;
+
+
+}
+#wishlist{
+  float:right;
+  color:#000000
+
+
+}
+a:link, a:visited{
+  color:#000000
+}

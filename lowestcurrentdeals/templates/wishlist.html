@@ -1,12 +1,65 @@
+
+<!DOCTYPE html>
+
 <html>
   <head>
     <title>Wishlist</title>
+    <link rel="stylesheet" type="text/css" href= "assets/style.css"></link>
+    <link href='http://fonts.googleapis.com/css?family=Rancho' rel='stylesheet' type='text/css'>
   </head>
   <body>
-    <h1>Your Wishlist</h1>
-
-  <!--once user is implented, if not user-->
-  <p>No wishlist available.</p>
-
+    <div id = 'header'>
+    {% if user %}
+    <a href='{{logout}}'>
+      <div class = 'header_part'>
+        Log Out
+      </div>
+    </a>
+    <a href= "/">
+      <div class = 'header_part'>
+        Go back to search
+      </div>
+    </a>
+    {% else %}
+    <a href='{{login}}'>
+      <div class = 'header_part'>
+        Sign In or Register
+      </div>
+    </a>
+    {% endif %}
+    <a href= "/">
+    <img id = 'search_logo' src = 'assets/logo.png'>
+  </a>
+    <div id = 'search_bar'>
+      <form method = "get" action = "/results">
+        <input id='search' type = "text" name = "search"
+        ><input id='submit' type = "submit" value = "Find LCD">
+      </form>
+    </div>
+  </div>
+    </div>
+    <div id = 'contents'>
+    <div id = 'results'>
+      {% if not wishlist %}
+        <h2>No Wishlist items to display</h2>
+      {% else %}
+    <h2>Your Wishlist</h2>
+    {% endif %}
+  </div>
+      {% if wishlist %}
+      {% for result in wishlist %}
+      <div class = 'result'><div class = 'result_image'>{{result.image}}</div><div class = 'information'> {{result.name}}<br>
+      Sale Price: {{result.price}} <br>
+      <a href='{{result.url}}'><input class = 'button' type = 'button' value = 'Buy from {{result.store.capitalize()}}'></a> <br>
+      <a href='{{result.removeUrl}}'><input class = 'button' type = 'button' value = 'Remove from Wishlist'></a>
+    </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+      <br>
+      <form method = "get" action = "/">
+        <input class = 'button' type = "submit" value = "Back to search">
+      </form>
+    </div>
   </body>
 </html>

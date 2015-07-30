@@ -12,7 +12,7 @@ body {
   margin: 0px 0px 0px 0px;
   z-index: 5;
   background-color: #8C4039;
-  height : 50;
+  height : 56;
 }
 
 #loggedin {
@@ -29,7 +29,17 @@ body {
   border: 5px solid #663A15;
 }
 
+img.result_image{
+  width: 110px;
+  border: 3px solid #663A15;
+  margin-right: 5px;
+}
+
 .result_image{
+  display: inline-block;
+}
+
+.result_image img{
   width: 110px;
   border: 3px solid #663A15;
   margin-right: 5px;
@@ -91,9 +101,10 @@ a:visited{
 
 #search {
   width : 400px;
-  height : 20px;
+  height : 22px;
   border-radius: 5px 0px 0px 5px;
   border: 0;
+  padding: 0px;
 }
 
 #results {
@@ -109,4 +120,16 @@ a:visited{
 
 #submit:hover {
   background-color: #CC5D53;
+}
+
+.button {
+  margin-top: 4px;
+  background-color: #de857e;
+  height : 22px;
+  border-radius: 5px 5px 5px 5px;
+  border: 0;
+}
+
+.button:hover {
+  background-color: #ffbeb9;
 }

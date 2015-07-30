@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href='assets/theme.css'>
     <title>Product Search</title>
+    <h1>  {% if user %}
+        <a href= "/wishlist" id="wishlist" style="text-decoration:none">Go to my Wishlist</a>
+        {% endif %}
   </head>
   <body>
     <div id = 'header'>
     {% if user %}
     <div id = 'loggedin'>
-    <a href= "/wishlist">Go to my Wishlist</a>
     <a href='{{logout}}'>Log Out</a>
   </div>
     {% else %}
@@ -16,12 +18,12 @@
     <a href='{{login}}'>Sign In or Register</a>
   </div>
     {% endif %}
-    <div>
+  </div>
     <h1>{{greeting}}</h1>
-    <h1>Product Search<h1>
+    <img src="assets/Logo.png" id="logo">
     <form method = "get" action = "/results">
-      <input type = "text" name = "search">
-      <input type = "submit" value = "Find LCD">
+      <input type = "text" name = "search" id="searchbar">
+      <input type = "submit" value = "Find LCD" id="searchsubmit">
     </form>
   </body>
 </html>
