@@ -5,9 +5,18 @@
     <title>Product Search</title>
   </head>
   <body>
+    <div id = 'header'>
     {% if user %}
+    <div id = 'loggedin'>
     <a href= "/wishlist">Go to my Wishlist</a>
+    <a href='{{logout}}'>Log Out</a>
+  </div>
+    {% else %}
+    <div id = 'loggedout'>
+    <a href='{{login}}'>Sign In or Register</a>
+  </div>
     {% endif %}
+    <div>
     <h1>{{greeting}}</h1>
     <h1>Product Search<h1>
     <form method = "get" action = "/results">

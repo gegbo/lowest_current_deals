@@ -27,6 +27,7 @@ from test_settings import *
 from amazon.api import AmazonAPI
 from google.appengine.api import urlfetch
 from google.appengine.api import users
+from google.appengine.api import datastore
 
 jinja_environment=jinja2.Environment(
     loader=jinja2.FileSystemLoader(
@@ -38,13 +39,13 @@ class SearchHandler(webapp2.RequestHandler):
         template = jinja_environment.get_template('templates/search.html')
         user = users.get_current_user()
         if user:
-            greeting = ('Welcome, %s! (<a href="%s">sign out</a>)' %
-                        (user.nickname(), users.create_logout_url('/')))
+            greeting = ('Welcome, %s!' %
+                        (user.nickname()))
         else:
             greeting = ('<a href="%s">Sign in or register</a>.' %
                         users.create_login_url('/'))
 
-        self.response.out.write(template.render({'user' : user, 'greeting' : greeting}))
+        self.response.out.write(template.render({'user' : user, 'greeting' : greeting, 'logout' : users.create_logout_url('/'), 'login' : users.create_login_url('/')}))
 
 #displays search results on a new page /results
 # with GCSE, it's also possible to display the search bar and results on the same page,
@@ -71,12 +72,16 @@ class ResultHandler(webapp2.RequestHandler):
         for product in walmart_results:
             results += [(product.get('name'), product.get('salePrice'), product.get('productUrl'), product.get('thumbnailImage'), 'Walmart')]
         results = sorted(results,key=lambda x: x[1])
-        template_variables={"user_search":search, 'results':results}
+        template_variables={"user_search":search, 'results':results, 'user': users.get_current_user()}
         self.response.write(template.render(template_variables))
 
 
 
 class WishListHandler(webapp2.RequestHandler):
+    def post(self):
+        wishlist_item = self.request.get('item')
+        self.response.write(wishlist_item)
+
     def get(self):
         template=jinja_environment.get_template('/templates/wishlist.html')
         self.response.write(template.render())

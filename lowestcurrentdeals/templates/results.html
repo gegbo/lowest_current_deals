@@ -3,27 +3,57 @@
 <html>
   <head>
     <title>Results</title>
+    <link rel="stylesheet" type="text/css" href= "assets/style.css"></link>
+    <link href='http://fonts.googleapis.com/css?family=Rancho' rel='stylesheet' type='text/css'>
   </head>
   <body>
+    <div id = 'header'>
     {% if user %}
-    <a href= "/wishlist">Go to my Wishlist</a>
+    <a href='{{logout}}'>
+      <div class = 'header_part'>
+        Log Out
+      </div>
+    </a>
+    <a href= "/wishlist">
+      <div class = 'header_part'>
+        Go to my Wishlist
+      </div>
+    </a>
+    {% else %}
+    <a href='{{login}}'>
+      <div class = 'header_part'>
+        Sign In or Register
+      </div>
+    </a>
     {% endif %}
-    <h2>Results</h2>
-    <form method = "get" action = "/results">
-      <input type = "text" name = "search">
-      <input type = "submit" value = "Find LCD">
-    </form>
-    <!--Placeholder for GCSE results-->
+    <img id = 'search_logo' src = 'assets/logo.png'>
+    <div id = 'search_bar'>
+      <form method = "get" action = "/results">
+        <input id='search' type = "text" name = "search"
+        ><input id='submit' type = "submit" value = "Find LCD">
+      </form>
+    </div>
+  </div>
+    </div>
+    <div id = 'contents'>
+    <div id = 'results'>
     <h2>Your search for {{user_search}} returned:</h2>
+  </div>
       {% for result in results %}
-      <div><img src='{{result[3]}}'> {{result[0]}}<br>
+      <div class = 'result'><img class = 'result_image' src='{{result[3]}}'><div class = 'information'> {{result[0]}}<br>
       Sale Price: {{result[1]}} <br>
       <a href='{{result[2]}}'>Buy from {{result[4]}}</a>
+      <form method = 'post' action = '/wishlist'>
+        <input type = 'hidden' name = 'item' value = '{{result}}'>
+        <input type = 'submit' value = 'Add to Wishlist'>
+      </form>
+    </div>
       </div>
       {% endfor %}
       <br>
       <form method = "get" action = "/">
         <input type = "submit" value = "Back to search">
       </form>
+    </div>
   </body>
 </html>
