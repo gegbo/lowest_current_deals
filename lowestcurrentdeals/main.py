@@ -246,24 +246,39 @@ class RemoveHandler(webapp2.RequestHandler):
         self.response.write(template.render({'user': users.get_current_user(), 'logout' : users.create_logout_url('/'), 'login' : users.create_login_url('/')}))
 
 class EmailHandler(webapp2.RequestHandler):
+    def getMessageBodyForProductURL(self):
+        return """
+
+        Buy Here: %s""" % (
+        self.request.get('producturl'))
+
+    # Step two: make the email body look "nice"
+    def getMessageBodyForWishlist(self):
+        user = users.get_current_user()
+        person_id = user.user_id()
+        wishlist_items = WishList.query(WishList.user_id==person_id).fetch()
+
+        body_text = "<html><body>"
+        for wishlist_item in wishlist_items:
+            body_text += 'I found %s for only $%s! Please buy it for me! :) <a href = "%s">Buy item</a><br>' % (
+              wishlist_item.name,
+              wishlist_item.price,
+              wishlist_item.url,
+            )
+        body_text+="</body></html>"
+        return body_text
 
     def get (self):
         template = jinja_environment.get_template("/templates/emailsent.html")
-        self.response.write(template.render({  'user': users.get_current_user(),  'logout' : users.create_logout_url('/'), 'login' : users.create_login_url('/')}))
+        self.response.write(template.render())
 
-        template = jinja_environment.get_template('templates/emailsent.html')
         user=users.get_current_user()
-        user_address = user.email()
+        # Step 3: Use your new form field to set the to_address.
+        to_address = self.request.get('to_address')
         sender_address = user.email()
-        subject = "Product From LCD"
-        body = """
-
-        Buy Here: %s
-
-""" %(self.request.get('producturl'))
-
-        mail.send_mail(sender_address, user_address, subject, body)
-
+        subject = "Wishlist from Lowest Current Deals"
+        body = self.getMessageBodyForWishlist()
+        mail.send_mail(sender_address, to_address, subject, body, html = body)
 
 
 class CompareHandler(webapp2.RequestHandler):

@@ -28,7 +28,7 @@
     </a>
     {% endif %}
     <a href= "/">
-    <img id = 'search_logo' src = 'assets/logo.png'>
+    <img id = 'search_logo' src = 'assets/Logo.png'>
   </a>
     <div id = 'search_bar'>
       <form method = "get" action = "/results">
@@ -57,6 +57,12 @@
       {% endfor %}
       {% endif %}
       <br>
+      <div>
+        <form method = "get" action = "/email">
+          <div id = 'emailtext'>Destination Email: </div><input id = 'email' type = "text" name="to_address"
+          ><input id = 'submitemail' type = "submit" value = "Email my Wishlist">
+        </form>
+    </div>
       <form method = "get" action = "/">
         <input class = 'button' type = "submit" value = "Back to search">
       </form>

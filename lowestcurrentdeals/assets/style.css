@@ -107,7 +107,19 @@ a:visited{
   padding: 0px;
 }
 
-#results {
+#email {
+  height : 22px;
+  border-radius: 5px 0px 0px 5px;
+  border: 0;
+  padding: 0px;
+}
+
+#results{
+  font-family: 'Rancho', cursive;
+}
+
+#emailtext {
+  display: inline;
   font-family: 'Rancho', cursive;
 }
 
@@ -118,8 +130,19 @@ a:visited{
   border: 0;
 }
 
-#submit:hover {
+#submitemail:hover {
   background-color: #CC5D53;
+}
+
+#submitemail {
+  background-color: #de857e;
+  height : 22px;
+  border-radius: 0px 5px 5px 0px;
+  border: 0;
+}
+
+#submit:hover {
+  background-color: #ffbeb9;
 }
 
 .button {

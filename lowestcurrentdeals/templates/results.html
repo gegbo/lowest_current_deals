@@ -28,7 +28,7 @@
     </a>
     {% endif %}
     <a href= "/">
-    <img id = 'search_logo' src = 'assets/logo.png'>
+    <img src='/assets/Logo.png' id='search_logo'></img>
   </a>
     <div id = 'search_bar'>
       <form method = "get" action = "/results">
@@ -45,7 +45,6 @@
       <div class = 'result'><img class = 'result_image' src='{{result[3]}}'><div class = 'information'> {{result[0]}}<br>
       Sale Price: ${{result[1]}} <br>
       <a href='{{result[2]}}'><input class = 'button' type = 'button' value = 'Buy from {{result[4]}}'></a><br>
-      <a href='{{result[7]}}'><input class = 'button' type = 'button' value = 'Email Product Link'></a><br>
       <a href={{result[6]}}><input class = 'button' type = 'button' value = 'Find Lowest Price'></a>
     </div>
       </div>
